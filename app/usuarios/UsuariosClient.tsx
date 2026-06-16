@@ -111,14 +111,14 @@ export default function UsersPage() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            inactiveUser: true,
+            inactiveUser: selectedUser?.ativo === 1,
         }),
       });
 
       if (!res.ok) throw new Error();
       fetchUsers();
       setShowInactiveUserModal(false);
-      toast.success('usuário inativado com sucesso!');     
+      toast.success(selectedUser?.ativo === 1 ? 'Usuário inativado com sucesso!' : 'Usuário ativado com sucesso!');     
     } catch {
       toast.error("Erro ao inativar usuário.");
     } finally {
@@ -207,14 +207,13 @@ export default function UsersPage() {
                                                 Resetar senha
                                             </button>   
                                             <button 
-                                                className="px-6 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                                className={`py-2 px-4 rounded text-white text-sm ${user.ativo === 1 ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
                                                 onClick={() => { 
                                                     setSelectedUser(user);
                                                     setShowInactiveUserModal(true);
                                                 }}
-                                                disabled={user.ativo === 0}
                                             >
-                                                Inativar
+                                                {user.ativo === 1 ? 'Inativar' : 'Ativar'}
                                             </button> 
                                         </div>              
                                     </td>
@@ -274,10 +273,14 @@ export default function UsersPage() {
         />
         <InactiveUserModal
             open={showInactiveUserModal}
-            title="Inativar Usuário"
-            message={`Deseja realmente inativar o usuário ${selectedUser?.email}?`}
-            confirmText="Inativar"
-            loading={reseting}
+            title={selectedUser?.ativo === 1 ? "Inativar Usuário" : "Ativar Usuário"}
+            message={selectedUser?.ativo === 1
+              ? `Deseja realmente inativar o usuário ${selectedUser?.email}?`
+              : `Deseja realmente ativar o usuário ${selectedUser?.email}?`
+            }
+            confirmText={selectedUser?.ativo === 1 ? "Inativar" : "Ativar"}
+            loadingText={selectedUser?.ativo === 1 ? "Inativando..." : 'Ativando...'}
+            loading={inativando}
             onConfirm={handleInactiveUser}
             onCancel={() => setShowInactiveUserModal(false)}
         />

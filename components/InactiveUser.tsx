@@ -6,6 +6,7 @@ type ResetPasswordModalProps = {
   message: string;
   confirmText?: string;
   cancelText?: string;
+  loadingText?: string;
   loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -17,6 +18,7 @@ export function InactiveUserModal({
   message,
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
+  loadingText,
   loading = false,
   onConfirm,
   onCancel,
@@ -50,7 +52,7 @@ export function InactiveUserModal({
               ${loading ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'}
             `}
           >
-            {loading ? 'Inativando...' : confirmText}
+            {loading ? loadingText : confirmText}
           </button>
         </div>
       </div>

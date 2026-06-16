@@ -19,10 +19,10 @@ export async function PUT(
     );
   }
 
-  if (body.inactiveUser) {
+  if (body.inactiveUser !== undefined) {
     await db.query(
-      "UPDATE usuarios SET ativo = 0 WHERE id = ?",
-      [id]
+      "UPDATE usuarios SET ativo = ? WHERE id = ?",
+      [body.inactiveUser ? 0 : 1, id]
     );
   }
 
