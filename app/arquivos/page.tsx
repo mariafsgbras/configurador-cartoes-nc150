@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { Layout } from "@/components/Layout";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { useRef } from "react";
@@ -20,7 +19,6 @@ export type Origin = 'S' | 'L';
 
 export default function ArquivosPage() {
   const { data: session } = useSession();
-  const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [archives, setArchives] = useState<Archive[]>([]);
@@ -30,7 +28,7 @@ export default function ArquivosPage() {
   const [deleting, setDeleting] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
-  const [page, setPage] = useState(Number(searchParams.get('page') ?? 1));
+  const [page, setPage] = useState(1);
   const [limit] = useState(20);
   const [total, setTotal] = useState(0);
 
