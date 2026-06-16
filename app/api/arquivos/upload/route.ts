@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
   );
   const userUuid = rows[0]?.uuid;
   if (!userUuid) return NextResponse.json({ error: "User not found" }, { status: 404 });
+  console.log("UPLOAD_DIR:", process.env.UPLOAD_DIR);
+  console.log("uploadDir:", path.join(process.env.UPLOAD_DIR ?? "uploads", userUuid));
 
   const formData = await req.formData();
   const file = formData.get("file") as File;
