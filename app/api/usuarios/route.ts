@@ -54,7 +54,8 @@ export async function GET(req: NextRequest) {
     SELECT 
       u.id,
       u.email,
-      u.uuid
+      u.uuid, 
+      u.ativo
     ${baseQuery}
     ${whereSQL}
     ORDER BY u.id ASC

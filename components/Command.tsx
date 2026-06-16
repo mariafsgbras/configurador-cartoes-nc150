@@ -34,7 +34,8 @@ export function CommandModal({
   const [copyToast,setCopyToast] = useState(false);
 
   function generateCommand() {
-    setComando(`NC150|07.7|${archive}|${uuid}|${ssid}|${password}|`);
+    const archiveName = archive.replace(/\.[^/.]+$/, '');
+    setComando(`NC150|07.7|${archiveName}|${uuid}|${ssid}|${password}|`);
   };
 
   function copy() {

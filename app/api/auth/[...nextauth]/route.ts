@@ -42,10 +42,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         } 
 
-        /*if (usuario.ativo !== 1) {
+        if (usuario.ativo !== 1) {
           console.log("❌ Usuário inativo");
           return null;
-        }*/
+        }
 
         return {
           id: usuario.id.toString(),

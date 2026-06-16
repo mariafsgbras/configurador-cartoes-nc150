@@ -8,11 +8,15 @@ import { ResetPasswordModal } from "@/components/ResetPassword";
 import { useSession } from "next-auth/react";
 import toast from 'react-hot-toast';
 import { useRouter } from "next/navigation";
+import { InactiveUserModal } from "@/components/InactiveUser";
+
+export type UserActive = 1 | 0;
 
 interface User {
   id: number;
   email: string;
   uuid: string;
+  ativo: UserActive;
 }
 
 export default function UsersPage() {
@@ -24,9 +28,11 @@ export default function UsersPage() {
   const [newUserModal, setNewUserModal] = useState(false);
   const [createdToast, setCreatedToast] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showInactiveUserModal, setShowInactiveUserModal] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [reseting, setReseting] = useState(false);
+  const [inativando, setInativando] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -93,6 +99,33 @@ export default function UsersPage() {
     }
   };
 
+  async function handleInactiveUser() {
+    if (!session) return;
+
+    try {
+      setInativando(true);
+      
+      const res = await fetch(`/api/usuarios/${selectedUser?.id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            inactiveUser: true,
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+      fetchUsers();
+      setShowInactiveUserModal(false);
+      toast.success('usuário inativado com sucesso!');     
+    } catch {
+      toast.error("Erro ao inativar usuário.");
+    } finally {
+      setInativando(false);
+    }
+  };
+
   useEffect(() => {
     if (session && session.user.role === 'cliente') {
         router.replace('/arquivos');
@@ -142,10 +175,12 @@ export default function UsersPage() {
                     <table className="w-full text-left table-fixed justify-between">
                         <thead>
                             <tr className="text-gray-500 text-sm uppercase">
-                                <th className="px-4 w-[5%]">ID</th>
-                                <th className="px-4 pb-3 w-2/5">Email</th>
-                                <th className="px-4 pb-3 w-2/5">Token</th>
-                                <th className="w-[15%]"></th>
+                                <th className="px-4 pb-3 w-[5%]">ID</th>
+                                <th className="px-4 pb-3 w-[30%]">Email</th>
+                                <th className="px-4 pb-3 w-[10%]">Ativo</th>
+                                <th className="px-4 pb-3 w-[30%]">Token</th>
+                                <th className="w-[25%]"></th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -156,17 +191,32 @@ export default function UsersPage() {
                                 >
                                     <td className="px-4 whitespace-nowrap truncate">{user.id}</td>
                                     <td className="px-4 whitespace-nowrap truncate max-w-[160px]">{user.email}</td>
+                                    <td className="px-4 py-2">
+                                        <ActiveBadge status={user.ativo} />
+                                    </td>
                                     <td className="px-4 whitespace-nowrap truncate max-w-[160px]">{user.uuid}</td>
                                     <td className='py-2'>
-                                        <button 
-                                            className="px-6 py-2 rounded bg-yellow-600 hover:bg-yellow-700 text-white text-sm"
-                                            onClick={() => { 
-                                                setSelectedUser(user);
-                                                setShowResetModal(true);
-                                            }}
-                                        >
-                                            Resetar senha
-                                        </button>                 
+                                        <div className='flex justify-end items-center gap-2'>
+                                            <button 
+                                                className="px-6 py-2 rounded bg-yellow-600 hover:bg-yellow-700 text-white text-sm"
+                                                onClick={() => { 
+                                                    setSelectedUser(user);
+                                                    setShowResetModal(true);
+                                                }}
+                                            >
+                                                Resetar senha
+                                            </button>   
+                                            <button 
+                                                className="px-6 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                                onClick={() => { 
+                                                    setSelectedUser(user);
+                                                    setShowInactiveUserModal(true);
+                                                }}
+                                                disabled={user.ativo === 0}
+                                            >
+                                                Inativar
+                                            </button> 
+                                        </div>              
                                     </td>
                                 </tr>
                             ))}
@@ -222,7 +272,35 @@ export default function UsersPage() {
             onConfirm={handleResetPassword}
             onCancel={() => setShowResetModal(false)}
         />
+        <InactiveUserModal
+            open={showInactiveUserModal}
+            title="Inativar Usuário"
+            message={`Deseja realmente inativar o usuário ${selectedUser?.email}?`}
+            confirmText="Inativar"
+            loading={reseting}
+            onConfirm={handleInactiveUser}
+            onCancel={() => setShowInactiveUserModal(false)}
+        />
       </div>
     </Layout>
+  );
+}
+
+export function ActiveBadge({ status }: { status: UserActive }) {
+  const styles = {
+    0: 'border-red-500 text-red-600',
+    1: 'border-green-500 text-green-600',
+  };
+
+  const label = {
+    0: 'Inativo',
+    1: 'Ativo',
+  };
+  return (
+    <span
+      className={`px-3 py-1 border rounded text-sm ${styles[status]}`}
+    >
+      {label[status]}
+    </span>
   );
 }

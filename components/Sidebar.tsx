@@ -7,8 +7,9 @@ import { useSession, signOut } from "next-auth/react";
 import {
   MdExitToApp,
   MdMenu,
-  MdConfirmationNumber,
   MdPerson,
+  MdSyncLock,
+  MdDriveFolderUpload,
 } from 'react-icons/md';
 import { hasPermission } from '@/config/permissions';
 import { UserRole } from '@/types/role';
@@ -80,17 +81,17 @@ export function Sidebar() {
             </span>
           </>
         )}
-        {/*<button
+        <button
           onClick={() => router.push('/alterar-senha')}
           className={`
             mt-4 flex items-center gap-2 text-sm text-gray-500
-            hover:bg-[#3f7a49] hover:text-white rounded px-2 py-1
+            hover:bg-[#151f2f] hover:text-white rounded px-2 py-1
           `}
           title="Alterar senha"
         >
           <MdSyncLock size={18} />
           {!collapsed && 'Alterar senha'}
-        </button>*/}
+        </button>
         <button
           onClick={async () => {
             await signOut({ redirect: false });
@@ -115,7 +116,7 @@ export function Sidebar() {
           <MenuItem
             href="/arquivos"
             label="Arquivos"
-            icon={<MdConfirmationNumber size={20} />}
+            icon={<MdDriveFolderUpload size={20} />}
             collapsed={collapsed}
           />
         }

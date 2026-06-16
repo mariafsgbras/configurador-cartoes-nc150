@@ -19,6 +19,13 @@ export async function PUT(
     );
   }
 
+  if (body.inactiveUser) {
+    await db.query(
+      "UPDATE usuarios SET ativo = 0 WHERE id = ?",
+      [id]
+    );
+  }
+
   return NextResponse.json({
     ok: true,
   });
