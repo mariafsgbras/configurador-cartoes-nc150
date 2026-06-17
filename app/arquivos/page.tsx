@@ -26,7 +26,7 @@ export default function ArquivosPage() {
 
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [downloading, setDownloading] = useState(false);
+  const [downloading, setDownloading] = useState<number | null>(null);
 
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
@@ -129,7 +129,7 @@ export default function ArquivosPage() {
   };
 
   async function handleDownload(id: number) {
-    setDownloading(true);
+    setDownloading(id);
     const res = await fetch(`/api/arquivos/download?id=${id}`);
 
     if (!res.ok) {
@@ -159,7 +159,7 @@ export default function ArquivosPage() {
 
     setDownloadToast(true);
     setTimeout(() => setDownloadToast(false), 3000);
-    setDownloading(false);
+    setDownloading(null);
   };
 
   console.log(archives);
@@ -233,7 +233,7 @@ export default function ArquivosPage() {
                             className="px-6 py-2 rounded bg-yellow-600 hover:bg-yellow-700 text-white text-sm"
                             onClick={() => handleDownload(archive.id)}
                           >
-                            {downloading ? 'Baixando...' : 'Baixar'}
+                            {downloading === archive.id ? 'Baixando...' : 'Baixar'}
                           </button>
                           <button 
                             className="px-6 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
