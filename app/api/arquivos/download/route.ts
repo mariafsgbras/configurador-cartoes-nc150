@@ -45,8 +45,8 @@ export async function GET(req: NextRequest) {
   }
 
   const filePath = path.join(
-    process.cwd(),
-    arquivo.path_interno.replace(/^\/+/, "")
+    process.env.UPLOAD_DIR ?? "uploads",
+    arquivo.path_interno.replace(/^\/uploads\//, "")
   );
 
   const buffer = await readFile(filePath);
