@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from '@/lib/db';
 import bcrypt from 'bcrypt';
+import { nanoid } from 'nanoid';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -106,16 +107,18 @@ export async function POST(req: NextRequest) {
 
     const senhaHash = await bcrypt.hash(password, 10);
 
+    const uuid = nanoid(16);
+
     const [result]: any = await db.execute(
       `
       INSERT INTO usuarios
-      (email, senha_hash)
-      VALUES (?, ?)
+      (uuid, email, senha_hash)
+      VALUES (?, ?, ?)
       `,
-      [email, senhaHash]
+      [uuid, email, senhaHash]
     );
 
-    const [rows]: any = await db.query(
+    /*const [rows]: any = await db.query(
       `
       SELECT uuid
       FROM usuarios
@@ -123,12 +126,9 @@ export async function POST(req: NextRequest) {
       LIMIT 1
       `,
       [result.insertId]
-    );
+    );*/
 
-    return NextResponse.json({
-      ok: true,
-      uuid: rows[0]?.uuid,
-    });
+    return NextResponse.json({ ok: true, uuid });
   } catch (error) {
     console.error(error);
 
