@@ -60,6 +60,8 @@ export function NewUserModal({
             throw new Error(data.error);
         }
 
+        setEmail('');
+        setPassword('');
         setUuidCriado(data.uuid);
         onConfirm();
     } catch (err: any) {
@@ -110,12 +112,16 @@ export function NewUserModal({
         <button
           disabled={!email || !password}
           className="w-full bg-[#3f7a49] text-white p-2 rounded disabled:opacity-50 mt-4 mb-4 hover:bg-green-700"
-          onClick={createAccount}
+          onClick={() => {
+            createAccount();
+            setEmail('');
+            setPassword('');
+          }}
         >
           {creating ? 'Criando...' : 'Criar conta'}
         </button>
 
-        {uuidCriado && (
+        {/*{uuidCriado && (
           <div style={{ marginTop: '1rem' }}
             className="bg-[#0a1628] border border-gray-700 rounded-lg px-4 py-3"
           >
@@ -128,7 +134,7 @@ export function NewUserModal({
               {uuidCriado}
             </code>
           </div>
-        )}
+        )}*/}
         
         <div className="flex justify-end gap-3 mt-4">
 
