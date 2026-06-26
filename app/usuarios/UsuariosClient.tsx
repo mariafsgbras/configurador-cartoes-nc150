@@ -238,7 +238,7 @@ export default function UsersPage() {
           </span>
 
           <button
-            disabled={page === totalPages}
+            disabled={page === totalPages || totalPages === 0}
             onClick={() => setPage(prev => prev + 1)}
             className="px-4 py-2 bg-[#10203d] rounded text-white disabled:opacity-50"
           >
